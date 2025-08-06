@@ -10,6 +10,7 @@ import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,11 +41,11 @@ public class CourseBaseInfoServiceInfo implements CourseBaseInfoService {
         // 构建查询对象
         LambdaQueryWrapper<CourseBase> courseBaseLambdaQueryWrapper = new LambdaQueryWrapper<>();
         // 设置查询条件-根据课程名称模糊查询
-        courseBaseLambdaQueryWrapper.like(CourseBase::getName, queryCourseParamsDto.getCourseName());
+        courseBaseLambdaQueryWrapper.like(StringUtils.isNotEmpty(queryCourseParamsDto.getCourseName()),CourseBase::getName,queryCourseParamsDto.getCourseName());
         // 设置查询条件-根据课程审核状态查询
-        courseBaseLambdaQueryWrapper.eq(queryCourseParamsDto.getAuditStatus() != null, CourseBase::getAuditStatus, queryCourseParamsDto.getAuditStatus());
+        courseBaseLambdaQueryWrapper.eq(StringUtils.isNotEmpty(queryCourseParamsDto.getAuditStatus()),CourseBase::getAuditStatus,queryCourseParamsDto.getAuditStatus());
         // 设置查询条件-根据课程状态查询
-        courseBaseLambdaQueryWrapper.eq(queryCourseParamsDto.getPublishStatus() != null, CourseBase::getStatus, queryCourseParamsDto.getPublishStatus());
+        courseBaseLambdaQueryWrapper.eq(StringUtils.isNotEmpty(queryCourseParamsDto.getPublishStatus()),CourseBase::getStatus,queryCourseParamsDto.getPublishStatus());
 
         // 设置分页对象
         Page<CourseBase> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
