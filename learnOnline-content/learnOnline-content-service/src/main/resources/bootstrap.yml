@@ -1,11 +1,11 @@
 server:
   servlet:
-    context-path: /content
+    context-path: /content-service
   port: 63040
 #微服务配置
 spring:
   application:
-    name: content-api
+    name: content-service
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.163.129:3306/xcplus_content?serverTimezone=UTC&userUnicode=true&useSSL=false&
