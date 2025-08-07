@@ -20,7 +20,6 @@ public class AddCourseDto {
 
  @NotEmpty(message = "课程名称不能为空",groups = {ValidationGroups.Inster.class})
  @NotEmpty(message = "课程名称不能为空",groups = {ValidationGroups.Update.class})
-
  @ApiModelProperty(value = "课程名称", required = true)
  private String name;
 

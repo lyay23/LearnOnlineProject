@@ -4,6 +4,7 @@ import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
+import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 
@@ -39,4 +40,12 @@ public interface CourseBaseInfoService {
      */
 
      CourseBaseInfoDto getCourseBaseInfo(Long courseId);
+
+    /**
+     * 修改课程
+     * @param companyId 公司id
+     * @param editCourseDto 前端传入的数据
+     * @return 返回结果
+     */
+    CourseBaseInfoDto updateCourseBase(Long companyId, EditCourseDto editCourseDto);
 }
