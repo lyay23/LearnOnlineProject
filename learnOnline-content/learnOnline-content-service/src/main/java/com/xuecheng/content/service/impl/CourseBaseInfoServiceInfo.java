@@ -153,15 +153,16 @@ public class CourseBaseInfoServiceInfo implements CourseBaseInfoService {
     }
 
     // 查询课程信息
-    public CourseBaseInfoDto getCourseBaseInfo(long caseId){
+    @Override
+    public CourseBaseInfoDto getCourseBaseInfo(Long courseId){
 
         //从课程基本信息表查询
-        CourseBase courseBase = courseBaseMapper.selectById(caseId);
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
         if (courseBase==null){
             return null;
         }
         // 从课程营销表查询
-        CourseMarket courseMarket = courseMarketMapper.selectById(caseId);
+        CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
 
         //组装
         CourseBaseInfoDto courseBaseInfoDto = new CourseBaseInfoDto();
@@ -170,10 +171,10 @@ public class CourseBaseInfoServiceInfo implements CourseBaseInfoService {
 
         // 通过courseCategoryMapping 查询出分类的信息，然后将分类信息放到Dto中
         CourseCategory courseCategoryMt = courseCategoryMapper.selectById(courseBase.getMt());
-        courseBaseInfoDto.setMt(courseCategoryMt.getName());
+        courseBaseInfoDto.setMtName(courseCategoryMt.getName());
 
         CourseCategory courseCategorySt = courseCategoryMapper.selectById(courseBase.getSt());
-        courseBaseInfoDto.setMt(courseCategorySt.getName());
+        courseBaseInfoDto.setStName(courseCategorySt.getName());
 
 
 
