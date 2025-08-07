@@ -2,6 +2,7 @@ package com.xuecheng.content.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
@@ -85,31 +86,31 @@ public class CourseBaseInfoServiceInfo implements CourseBaseInfoService {
 
         // 参数合法性校验
         if (StringUtils.isBlank(addCourseDto.getName())) {
-            throw new RuntimeException("课程名称为空");
+            throw new XueChengPlusException("课程名称为空");
         }
 
         if (StringUtils.isBlank(addCourseDto.getMt())) {
-            throw new RuntimeException("课程分类为空");
+            throw new XueChengPlusException("课程分类为空");
         }
 
         if (StringUtils.isBlank(addCourseDto.getSt())) {
-            throw new RuntimeException("课程分类为空");
+            throw new XueChengPlusException("课程分类为空");
         }
 
         if (StringUtils.isBlank(addCourseDto.getGrade())) {
-            throw new RuntimeException("课程等级为空");
+            throw new XueChengPlusException("课程等级为空");
         }
 
         if (StringUtils.isBlank(addCourseDto.getTeachmode())) {
-            throw new RuntimeException("教育模式为空");
+            throw new XueChengPlusException("教育模式为空");
         }
 
         if (StringUtils.isBlank(addCourseDto.getUsers())) {
-            throw new RuntimeException("适应人群为空");
+            throw new XueChengPlusException("适应人群为空");
         }
 
         if (StringUtils.isBlank(addCourseDto.getCharge())) {
-            throw new RuntimeException("收费规则为空");
+            throw new XueChengPlusException("收费规则为空");
         }
 
         // 向课程基本信息表写入信息 course_base写入数据
@@ -187,12 +188,12 @@ public class CourseBaseInfoServiceInfo implements CourseBaseInfoService {
         // 参数合法校验
         String charge = courseMarket.getCharge();
         if(StringUtils.isBlank(charge)){
-            throw new RuntimeException("收费规则没有选择");
+            throw new XueChengPlusException("收费规则没有选择");
         }
         //收费规则为收费
         if(charge.equals("201001")){
             if(courseMarket.getPrice() == null || courseMarket.getPrice().floatValue()<=0){
-                throw new RuntimeException("课程为收费价格不能为空且必须大于0");
+                throw new XueChengPlusException("课程为收费价格不能为空且必须大于0");
             }
         }
 
