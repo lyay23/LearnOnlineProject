@@ -1,7 +1,9 @@
 package com.xuecheng.content.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.content.mapper.TeachplanMapper;
+import com.xuecheng.content.mapper.TeachplanMediaMapper;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
@@ -9,6 +11,7 @@ import com.xuecheng.content.service.TeachplanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.List;
 public class TechplanServiceImpl implements TeachplanService {
 
     private final TeachplanMapper teachplanMapper;
+    private final TeachplanMediaMapper teachplanMediaMapper;
     /**
      * 查询课程计划
      * @param courseId 课程id
@@ -79,6 +83,41 @@ public class TechplanServiceImpl implements TeachplanService {
             teachplan1.setChangeDate(LocalDateTime.now());
             teachplanMapper.updateById(teachplan1);
         }
+    }
+
+    @Transactional
+    @Override
+    public void deleteTeachplan(String id) {
+        // 1.删除第一级别的大章节时要求大章节下边没有小章节时方可删除
+        // 根据传入的id查询章节信息
+        // 2 删除第二级别的小章节时要求小章节下边没有视频时方可删除
+        // 3 删除第二级别的小章节时需要将teachplan_media表关联的信息也删除。
+        Teachplan teachplan = teachplanMapper.selectById(id);
+        if (teachplan==null){
+            return;
+        }
+        Long parentid = teachplan.getParentid();
+        if(parentid!=0) {
+            // 删除小章节
+            teachplanMapper.deleteById(id);
+            // 删除teachplan_media表关联的信息
+            teachplanMediaMapper.deleteById(id);
+        } else {
+            // 查询大章节下边是否有小章节
+            LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Teachplan::getParentid, id);
+            List<Teachplan> teachplanList = teachplanMapper.selectList(queryWrapper);
+            if (!teachplanList.isEmpty()){
+                // 有子节点，不能删除
+                XueChengPlusException.cast("该大章节下有子节点，不能删除");
+            }
+            // 删除大章节
+
+            teachplanMapper.deleteById(id);
+
+
+        }
+
     }
 }
 

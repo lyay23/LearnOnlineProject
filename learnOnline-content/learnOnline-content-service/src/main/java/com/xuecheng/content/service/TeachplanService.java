@@ -26,4 +26,10 @@ public interface TeachplanService {
      * @param teachplan 章节数据
      */
     void saveTeachplan(SaveTeachplanDto teachplan);
+
+    /**
+     * 删除章节
+     * @param id 章节id
+     */
+    void deleteTeachplan(String id);
 }
