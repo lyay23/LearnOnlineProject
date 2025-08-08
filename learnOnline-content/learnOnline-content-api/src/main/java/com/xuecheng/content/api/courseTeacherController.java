@@ -1,14 +1,12 @@
 package com.xuecheng.content.api;
 
+import com.xuecheng.content.model.dto.CourseTeacherDto;
 import com.xuecheng.content.model.po.CourseTeacher;
 import com.xuecheng.content.service.CourseTeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,10 +18,10 @@ import java.util.List;
  * @Description: 教师接口信息
  */
 @RestController
-@RequestMapping("/courseTeacher")
 @RequiredArgsConstructor
 @Api("教师接口信息")
-public class courseTeacher {
+@RequestMapping
+public class courseTeacherController {
 
     private final CourseTeacherService courseTeacherService;
 
@@ -31,9 +29,20 @@ public class courseTeacher {
      * 查询教师接口信息
      */
     @ApiOperation("查询教师接口信息")
-    @GetMapping("/list/{courseId}")
-    public List<CourseTeacher> queryCourseTeacher(@Validated Long courseId) {
+    @GetMapping("courseTeacher/list/{courseId}")
+    public List<CourseTeacher> queryCourseTeacher( @PathVariable Long courseId) {
 
         return courseTeacherService.queryCourseTeacher(courseId);
+    }
+
+    /**
+     * 新增教师接口信息
+     */
+    @ApiOperation("新增教师接口信息")
+    @PostMapping("/courseTeacher")
+    public CourseTeacher addCourseTeacher(@RequestBody CourseTeacherDto courseTeacherDto) {
+      Long companyId = 1232141425L;
+        return courseTeacherService.addCourseTeacher(companyId,courseTeacherDto);
+
     }
 }
