@@ -49,17 +49,30 @@ public class TechplanServiceImpl implements TeachplanService {
             // 新增
             Teachplan teachplan1 = new Teachplan();
             BeanUtils.copyProperties(teachplan,teachplan1);
-            teachplanMapper.insert(teachplan1);
+            
+            // 设置创建时间
             teachplan1.setCreateDate(LocalDateTime.now());
+            
+            // 设置排序号（新增时排在最后）
+            Long parentid = teachplan.getParentid();
+            Long courseId = teachplan.getCourseId();
+            
+            // 查询同级节点中最大的排序号
+            LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Teachplan::getCourseId, courseId)
+                       .eq(Teachplan::getParentid, parentid);
+            queryWrapper.orderByDesc(Teachplan::getOrderby);
+            queryWrapper.last("LIMIT 1");
+            
+            Teachplan maxOrderTeachplan = teachplanMapper.selectOne(queryWrapper);
+            int newOrderby = (maxOrderTeachplan != null) ? maxOrderTeachplan.getOrderby() + 1 : 1;
+            teachplan1.setOrderby(newOrderby);
+            
+            teachplanMapper.insert(teachplan1);
         }else {
             // 修改
             Teachplan teachplan1 = teachplanMapper.selectById(id);
-            Long parentid = teachplan.getParentid();
-            Long courseId = teachplan.getCourseId();
-            LambdaQueryWrapper<Teachplan> objectLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            objectLambdaQueryWrapper=objectLambdaQueryWrapper.eq(Teachplan::getCourseId,courseId).eq(Teachplan::getParentid,parentid);
-            Integer i = teachplanMapper.selectCount(objectLambdaQueryWrapper);
-            teachplan1.setOrderby(i+1);
+
             // 将参数传入
             BeanUtils.copyProperties(teachplan,teachplan1);
 
