@@ -117,7 +117,59 @@ public class TechplanServiceImpl implements TeachplanService {
 
 
         }
+    }
 
+
+    /**
+     * 移动章节
+     * @param moveType 移动类型
+     * @param teachplanid 章节id
+     */
+    @Override
+    public void moveTeachplan(String moveType, String teachplanid) {
+        //向上移动后和上边同级的课程计划交换位置，可以将两个课程计划的排序字段值进行交换。
+        if("moveup".equals(moveType)){
+            // 1.查询当前章节
+            Teachplan teachplan = teachplanMapper.selectById(teachplanid);
+            // 2.查询上边的章节
+            LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Teachplan::getParentid, teachplan.getParentid())
+                        .lt(Teachplan::getOrderby, teachplan.getOrderby())
+                        .last("LIMIT 1");
+            Teachplan upTeachplan = teachplanMapper.selectOne(queryWrapper);
+            if(upTeachplan==null){
+                // 无上边章节，不能移动
+                XueChengPlusException.cast("无上边章节，不能移动");
+            }
+            // 3.交换排序字段值
+            Integer orderby = teachplan.getOrderby();
+            teachplan.setOrderby(upTeachplan.getOrderby());
+            upTeachplan.setOrderby(orderby);
+            teachplanMapper.updateById(teachplan);
+            teachplanMapper.updateById(upTeachplan);
+        }
+        //向下移动后和下边同级的课程计划交换位置，可以将两个课程计划的排序字段值进行交换。
+        if("movedown".equals(moveType)){
+            // 1.查询当前章节
+            Teachplan teachplan = teachplanMapper.selectById(teachplanid);
+            // 2.查询下边的章节
+            LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Teachplan::getParentid, teachplan.getParentid())
+                        .eq(Teachplan::getCourseId, teachplan.getCourseId())
+                        .gt(Teachplan::getOrderby, teachplan.getOrderby())
+                        .last("LIMIT 1");
+            Teachplan downTeachplan = teachplanMapper.selectOne(queryWrapper);
+            if(downTeachplan==null){
+                // 无下边章节，不能移动
+                XueChengPlusException.cast("无下边章节，不能移动");
+            }
+            // 3.交换排序字段值
+            Integer orderby = teachplan.getOrderby();
+            teachplan.setOrderby(downTeachplan.getOrderby());
+            downTeachplan.setOrderby(orderby);
+            teachplanMapper.updateById(teachplan);
+            teachplanMapper.updateById(downTeachplan);
+        }
     }
 }
 

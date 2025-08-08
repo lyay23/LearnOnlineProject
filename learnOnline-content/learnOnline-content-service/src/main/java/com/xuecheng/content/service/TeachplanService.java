@@ -32,4 +32,11 @@ public interface TeachplanService {
      * @param id 章节id
      */
     void deleteTeachplan(String id);
+
+    /**
+     * 移动章节
+     * @param moveType 移动类型
+     * @param teachplanid 章节id
+     */
+    void moveTeachplan(String moveType, String teachplanid);
 }

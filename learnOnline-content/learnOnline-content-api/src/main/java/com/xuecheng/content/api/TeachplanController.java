@@ -49,4 +49,15 @@ public class TeachplanController {
         teachplanService.deleteTeachplan(id);
     }
 
+    /**
+     * 上移下移课程章节
+     */
+    @ApiOperation("上移下移课程计划")
+    @PostMapping("/teachplan/{moveType}/{teachplanid}")
+    public void moveTeachplan(@PathVariable String moveType,@PathVariable String teachplanid){
+
+        teachplanService.moveTeachplan(moveType,teachplanid);
+
+    }
+
 }
