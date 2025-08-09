@@ -36,13 +36,14 @@ public class courseTeacherController {
     }
 
     /**
-     * 新增教师接口信息
+     * 新增/修改教师接口信息
      */
-    @ApiOperation("新增教师接口信息")
+    @ApiOperation("新增/修改教师接口信息")
     @PostMapping("/courseTeacher")
     public CourseTeacher addCourseTeacher(@RequestBody CourseTeacherDto courseTeacherDto) {
       Long companyId = 1232141425L;
         return courseTeacherService.addCourseTeacher(companyId,courseTeacherDto);
 
     }
+
 }

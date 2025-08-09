@@ -63,9 +63,12 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
 
         // 添加讲师信息
         // 判断数据库有没有该数据
-        CourseTeacher courseTeacher = courseTeacherMapper.selectById(courseTeacherDto.getTeacherName());
+        CourseTeacher courseTeacher = courseTeacherMapper.selectById(courseTeacherDto.getId());
         if (courseTeacher != null){
-            XueChengPlusException.cast("讲师名称已存在");
+            // 有数据，更新
+            BeanUtils.copyProperties(courseTeacherDto, courseTeacher);
+            courseTeacherMapper.updateById(courseTeacher);
+            return courseTeacher;
         }
         courseTeacher = new CourseTeacher();
         BeanUtils.copyProperties(courseTeacherDto, courseTeacher);
