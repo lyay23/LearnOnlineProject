@@ -46,4 +46,15 @@ public class courseTeacherController {
 
     }
 
+    /**
+     * 删除教师接口信息
+     */
+
+    @ApiOperation("删除教师接口信息")
+    @DeleteMapping("/courseTeacher/course/{courseId}/{id}")
+    public void deleteCourseTeacher(@PathVariable Long courseId,@PathVariable Long id) {
+        Long companyId = 1232141425L;
+        courseTeacherService.deleteCourseTeacher(courseId,id,companyId);
+    }
+
 }

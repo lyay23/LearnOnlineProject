@@ -77,4 +77,37 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
 
         return courseTeacher;
     }
+
+
+    /**
+     * 删除讲师信息
+     * @param courseId 课程id
+     * @param id 讲师id
+     * @param companyId 公司id
+     */
+    @Override
+    public void deleteCourseTeacher(Long courseId, Long id, Long companyId) {
+        // 校验讲师信息
+        CourseTeacher courseTeacher = courseTeacherMapper.selectById(id);
+        if (courseTeacher == null){
+            XueChengPlusException.cast("讲师信息不存在");
+        }
+        // 校验课程信息
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if (courseBase == null){
+            XueChengPlusException.cast("课程信息不存在");
+        }
+        // 校验讲师信息是否属于该课程
+        if (!courseId.equals(courseTeacher.getCourseId())){
+            XueChengPlusException.cast("讲师信息不属于该课程");
+        }
+        // 校验讲师信息是否属于该公司
+        if (!companyId.equals(courseBase.getCompanyId())){
+            XueChengPlusException.cast("课程不属于该公司");
+        }
+
+        // 删除讲师信息
+        courseTeacherMapper.deleteById(id);
+
+    }
 }

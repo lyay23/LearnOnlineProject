@@ -29,4 +29,13 @@ public interface CourseTeacherService {
      * @return 返回讲师信息
      */
     CourseTeacher addCourseTeacher(Long companyId, CourseTeacherDto courseTeacherDto);
+
+    /**
+     * 更新讲师信息
+     * @param companyId 公司id
+     * @param id 讲师id
+     * @param courseId 课程id
+     */
+
+    void deleteCourseTeacher(Long courseId, Long id, Long companyId);
 }
