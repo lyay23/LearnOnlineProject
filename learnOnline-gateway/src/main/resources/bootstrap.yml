@@ -1,6 +1,7 @@
+#微服务配置
 spring:
   application:
-    name: system-service
+    name: gateway
   cloud:
     nacos:
       server-addr: 192.168.163.129:8848
@@ -8,15 +9,15 @@ spring:
         namespace: learnonlinedev
         group: xuecheng-plus-project
       config:
-        namespace: learnonlinedev
+        namespace: dev
         group: xuecheng-plus-project
         file-extension: yaml
         refresh-enabled: true
         shared-configs:
-          - data-id: log-dev.yaml
-            group: learnonlinedev
+          - data-id: log.dev.yaml
+            group: xuecheng-plus-common
+            refresh: true
+
 
   profiles:
     active: dev
-
-

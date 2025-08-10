@@ -3,18 +3,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>learnOnline-system</artifactId>
+        <artifactId>learnOnline-media</artifactId>
         <groupId>com.xuecheng</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>learnOnline-system-service</artifactId>
-    <name>learnOnline-system-service</name>
-    <description>learnOnline-system-service</description>
+    <artifactId>learnOnline-media-service</artifactId>
+    <name>learnOnline-media-service</name>
+    <description>learnOnline-media-service</description>
 
     <dependencies>
         <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.xuecheng</groupId>
-            <artifactId>learnOnline-system-model</artifactId>
+            <artifactId>learnOnline-media-model</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
@@ -54,14 +58,6 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
 
     </dependencies>
 
