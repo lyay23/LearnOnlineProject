@@ -6,10 +6,10 @@ spring:
     nacos:
       server-addr: 192.168.163.129:8848
       discovery:
-        namespace: ${spring.profiles.active}
+        namespace: learnonlinedev
         group: xuecheng-plus-project
       config:
-        namespace: ${spring.profiles.active}
+        namespace: learnonlinedev
         group: xuecheng-plus-project
         file-extension: yaml
         refresh-enabled: true
