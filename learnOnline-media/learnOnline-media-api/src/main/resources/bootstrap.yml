@@ -18,10 +18,7 @@ spring:
             group: xuecheng-plus-project
             refresh: true
         shared-configs:
-          - data-id: swagger-${spring.profiles.active}.yaml
-            group: xuecheng-plus-common
-            refresh: true
-          - data-id: log.dev.yaml
+          - data-id: log-dev.yaml
             group: learnonlinedev
             refresh: true
   profiles:

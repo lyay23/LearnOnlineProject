@@ -9,13 +9,13 @@ spring:
         namespace: learnonlinedev
         group: xuecheng-plus-project
       config:
-        namespace: dev
+        namespace: learnonlinedev
         group: xuecheng-plus-project
         file-extension: yaml
         refresh-enabled: true
         shared-configs:
-          - data-id: log.dev.yaml
-            group: xuecheng-plus-common
+          - data-id: log-dev.yaml
+            group: learnonlinedev
             refresh: true
 
 

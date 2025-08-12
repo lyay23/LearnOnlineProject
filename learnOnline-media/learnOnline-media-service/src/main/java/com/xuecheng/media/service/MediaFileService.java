@@ -3,10 +3,9 @@ package com.xuecheng.media.service;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
+import com.xuecheng.media.model.dto.UploadFileParamsDto;
+import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 /**
  * @description 媒资文件管理业务类
@@ -24,7 +23,26 @@ public interface MediaFileService {
   * @author Mr.M
   * @date 2022/9/10 8:57
  */
- public PageResult<MediaFiles> queryMediaFiels(Long companyId,PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
+  PageResult<MediaFiles> queryMediaFiels(Long companyId,PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
 
+ /**
+  * @description 文件上传方法
+  * @param companyId 机构id
+  * @param uploadFileParamsDto 文件上传的参数
+  * @param localFilePath 上传的本地路径
+  * @return 返回URL
+  */
+ UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+
+ /**
+  * 将文件信息添加到文件表
+  * @param companyId
+  * @param fileMd5
+  * @param uploadFileParamsDto
+  * @param bucket
+  * @param objectName
+  * @return
+  */
+ MediaFiles addMediaFilesToDb(Long companyId,String fileMd5,UploadFileParamsDto uploadFileParamsDto,String bucket,String objectName);
 
 }

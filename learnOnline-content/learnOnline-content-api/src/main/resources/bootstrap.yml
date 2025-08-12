@@ -7,19 +7,19 @@ spring:
       server-addr: 192.168.163.129:8848
       discovery:
         namespace: learnonlinedev
-        group: learnonlinedev
+        group: xuecheng-plus-project
       config:
         namespace: learnonlinedev
-        group: learnonlinedev
+        group: xuecheng-plus-project
         file-extension: yaml
         refresh-enabled: true
         extension-configs:
           - data-id: content-service-dev.yaml
-            group: learnonlinedev
+            group: xuecheng-plus-project
             refresh: true
         shared-configs:
           - data-id: log-dev.yaml
-            group: learnonlinedev
+            group: xuecheng-plus-common
 
   profiles:
    active: dev
