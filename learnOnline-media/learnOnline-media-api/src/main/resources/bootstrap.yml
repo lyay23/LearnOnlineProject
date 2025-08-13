@@ -21,6 +21,11 @@ spring:
           - data-id: log-dev.yaml
             group: learnonlinedev
             refresh: true
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   profiles:
     active: dev
 
