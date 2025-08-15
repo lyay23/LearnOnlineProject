@@ -17,6 +17,9 @@ spring:
           - data-id: content-service-dev.yaml
             group: xuecheng-plus-project
             refresh: true
+          - data-id: freemarker-config-dev.yaml
+            group: xuecheng-plus-common
+            refresh: true
         shared-configs:
           - data-id: log-dev.yaml
             group: xuecheng-plus-common

@@ -5,7 +5,7 @@ import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.service.MediaFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,12 +13,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
+/**
+ * @author 30506
+ */
 @Api(value = "大文件上传接口", tags = "大文件上传接口")
 @RestController
+@RequiredArgsConstructor
 public class BigFilesController {
 
-    @Autowired
-    MediaFileService mediaFileService;
+
+   private final MediaFileService mediaFileService;
 
 
     @ApiOperation(value = "文件上传前检查文件")
