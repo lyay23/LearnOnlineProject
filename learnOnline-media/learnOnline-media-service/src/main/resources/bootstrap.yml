@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: media-service
+  cloud:
+    nacos:
+      server-addr: 192.168.163.129:8848
+      discovery:
+        namespace: learnonlinedev
+        group: xuecheng-plus-project
+      config:
+        namespace: learnonlinedev
+        group: xuecheng-plus-project
+        file-extension: yaml
+        refresh-enabled: true
+      shared-configs:
+        - data-id: log.dev.yaml
+          group: learnonlinedev
+          refresh: true
+
+#profiles默认为dev
+  profiles:
+    active: dev
+
+
+

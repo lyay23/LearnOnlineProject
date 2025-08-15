@@ -1,0 +1,212 @@
+package com.xuecheng.content.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.content.mapper.TeachplanMapper;
+import com.xuecheng.content.mapper.TeachplanMediaMapper;
+import com.xuecheng.content.model.dto.BindTeachplanMediaDto;
+import com.xuecheng.content.model.dto.SaveTeachplanDto;
+import com.xuecheng.content.model.dto.TeachplanDto;
+import com.xuecheng.content.model.po.Teachplan;
+import com.xuecheng.content.model.po.TeachplanMedia;
+import com.xuecheng.content.service.TeachplanService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * Created with IntelliJ IDEA.
+ *
+ * @Author: 李阳
+ * @Date: 2025/08/07/17:39
+ * @Description: 查询课程计划的实现类
+ */
+@Service
+@RequiredArgsConstructor
+public class TechplanServiceImpl implements TeachplanService {
+
+    private final TeachplanMapper teachplanMapper;
+    private final TeachplanMediaMapper teachplanMediaMapper;
+    /**
+     * 查询课程计划
+     * @param courseId 课程id
+     * @return 返回课程结果
+     */
+    @Override
+    public List<TeachplanDto> findTeachplanTree(Long courseId) {
+        return teachplanMapper.selectTreeNodes(courseId);
+    }
+
+    /**
+     * 新增/修改章节
+     * @param teachplan 章节数据
+     */
+    @Override
+    public void saveTeachplan(SaveTeachplanDto teachplan) {
+
+        // 根据id判断是查询还是新增
+        Long id = teachplan.getId();
+
+        if(id==null){
+            // 新增
+            Teachplan teachplan1 = new Teachplan();
+            BeanUtils.copyProperties(teachplan,teachplan1);
+            
+            // 设置创建时间
+            teachplan1.setCreateDate(LocalDateTime.now());
+            
+            // 设置排序号（新增时排在最后）
+            Long parentid = teachplan.getParentid();
+            Long courseId = teachplan.getCourseId();
+            
+            // 查询同级节点中最大的排序号
+            LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Teachplan::getCourseId, courseId)
+                       .eq(Teachplan::getParentid, parentid);
+            queryWrapper.orderByDesc(Teachplan::getOrderby);
+            queryWrapper.last("LIMIT 1");
+            
+            Teachplan maxOrderTeachplan = teachplanMapper.selectOne(queryWrapper);
+            int newOrderby = (maxOrderTeachplan != null) ? maxOrderTeachplan.getOrderby() + 1 : 1;
+            teachplan1.setOrderby(newOrderby);
+            
+            teachplanMapper.insert(teachplan1);
+        }else {
+            // 修改
+            Teachplan teachplan1 = teachplanMapper.selectById(id);
+
+            // 将参数传入
+            BeanUtils.copyProperties(teachplan,teachplan1);
+
+            teachplan1.setChangeDate(LocalDateTime.now());
+            teachplanMapper.updateById(teachplan1);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deleteTeachplan(String id) {
+        // 1.删除第一级别的大章节时要求大章节下边没有小章节时方可删除
+        // 根据传入的id查询章节信息
+        // 2 删除第二级别的小章节时要求小章节下边没有视频时方可删除
+        // 3 删除第二级别的小章节时需要将teachplan_media表关联的信息也删除。
+        Teachplan teachplan = teachplanMapper.selectById(id);
+        if (teachplan==null){
+            return;
+        }
+        Long parentid = teachplan.getParentid();
+        if(parentid!=0) {
+            // 删除小章节
+            teachplanMapper.deleteById(id);
+            // 删除teachplan_media表关联的信息
+            teachplanMediaMapper.deleteById(id);
+        } else {
+            // 查询大章节下边是否有小章节
+            LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Teachplan::getParentid, id);
+            List<Teachplan> teachplanList = teachplanMapper.selectList(queryWrapper);
+            if (!teachplanList.isEmpty()){
+                // 有子节点，不能删除
+                XueChengPlusException.cast("该大章节下有子节点，不能删除");
+            }
+            // 删除大章节
+
+            teachplanMapper.deleteById(id);
+
+
+        }
+    }
+
+
+    /**
+     * 移动章节
+     * @param moveType 移动类型
+     * @param teachplanid 章节id
+     */
+    @Override
+    public void moveTeachplan(String moveType, String teachplanid) {
+        //向上移动后和上边同级的课程计划交换位置，可以将两个课程计划的排序字段值进行交换。
+        if("moveup".equals(moveType)){
+            // 1.查询当前章节
+            Teachplan teachplan = teachplanMapper.selectById(teachplanid);
+            // 2.查询上边的章节
+            LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Teachplan::getParentid, teachplan.getParentid())
+                        .lt(Teachplan::getOrderby, teachplan.getOrderby())
+                        .last("LIMIT 1");
+            Teachplan upTeachplan = teachplanMapper.selectOne(queryWrapper);
+            if(upTeachplan==null){
+                // 无上边章节，不能移动
+                XueChengPlusException.cast("无上边章节，不能移动");
+            }
+            // 3.交换排序字段值
+            Integer orderby = teachplan.getOrderby();
+            teachplan.setOrderby(upTeachplan.getOrderby());
+            upTeachplan.setOrderby(orderby);
+            teachplanMapper.updateById(teachplan);
+            teachplanMapper.updateById(upTeachplan);
+        }
+        //向下移动后和下边同级的课程计划交换位置，可以将两个课程计划的排序字段值进行交换。
+        if("movedown".equals(moveType)){
+            // 1.查询当前章节
+            Teachplan teachplan = teachplanMapper.selectById(teachplanid);
+            // 2.查询下边的章节
+            LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Teachplan::getParentid, teachplan.getParentid())
+                        .eq(Teachplan::getCourseId, teachplan.getCourseId())
+                        .gt(Teachplan::getOrderby, teachplan.getOrderby())
+                        .last("LIMIT 1");
+            Teachplan downTeachplan = teachplanMapper.selectOne(queryWrapper);
+            if(downTeachplan==null){
+                // 无下边章节，不能移动
+                XueChengPlusException.cast("无下边章节，不能移动");
+            }
+            // 3.交换排序字段值
+            Integer orderby = teachplan.getOrderby();
+            teachplan.setOrderby(downTeachplan.getOrderby());
+            downTeachplan.setOrderby(orderby);
+            teachplanMapper.updateById(teachplan);
+            teachplanMapper.updateById(downTeachplan);
+        }
+    }
+
+    /**
+     * 绑定媒资
+     * @param bindTeachplanMediaDto 媒资数据
+     */
+    @Override
+    public void associationMedia(BindTeachplanMediaDto bindTeachplanMediaDto) {
+
+        //教学计划id
+        Long teachplanId = bindTeachplanMediaDto.getTeachplanId();
+        Teachplan teachplan = teachplanMapper.selectById(teachplanId);
+        if(teachplan==null){
+            XueChengPlusException.cast("教学计划不存在");
+        }
+        Integer grade = teachplan.getGrade();
+        if(grade!=2){
+            XueChengPlusException.cast("只允许第二级教学计划绑定媒资文件");
+        }
+        //课程id
+        Long courseId = teachplan.getCourseId();
+
+        //先删除原来该教学计划绑定的媒资
+        teachplanMediaMapper.delete(new LambdaQueryWrapper<TeachplanMedia>().eq(TeachplanMedia::getTeachplanId,teachplanId));
+
+        //再添加教学计划与媒资的绑定关系
+        TeachplanMedia teachplanMedia = new TeachplanMedia();
+        teachplanMedia.setCourseId(courseId);
+        teachplanMedia.setTeachplanId(teachplanId);
+        teachplanMedia.setMediaFilename(bindTeachplanMediaDto.getFileName());
+        teachplanMedia.setMediaId(bindTeachplanMediaDto.getMediaId());
+        teachplanMedia.setCreateDate(LocalDateTime.now());
+        teachplanMediaMapper.insert(teachplanMedia);
+
+
+    }
+}
+
